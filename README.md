@@ -1,24 +1,33 @@
 # Site search tools
 
-Export, import and inspect Arc site-search shortcuts on macOS.
+Export, import and inspect Arc site-search shortcuts on macOS. Imports can also target Dia profiles.
 
-The scripts read and write Chromium's `keywords` table in each Arc profile's `Web Data` SQLite database. They use only the Python standard library.
+The scripts read and write Chromium's `keywords` table in a browser profile's `Web Data` SQLite database. They use only the Python standard library.
 
 ## Requirements
 
 - macOS
-- Arc
+- Arc (for listing, exporting and Arc imports)
+- Dia (optional, for imports)
 - Python 3
 
 Run each command from this directory, or include the path to the script.
 
 ## List profiles
 
+List Arc profiles (the default):
+
 ```bash
 ./list-profiles.py
 ```
 
-Use either the profile name or directory in the other commands. For example, `Personal`, `Work`, `Default` or `Profile 1`.
+List Dia profiles:
+
+```bash
+./list-profiles.py --browser Dia
+```
+
+For Arc commands, use the Arc profile name or directory, such as `Personal`, `Work`, `Default` or `Profile 1`. For Dia imports, use the Dia profile name or directory with `--browser Dia`.
 
 You can also pass a profile directory or the full path to its `Web Data` file.
 
@@ -55,13 +64,19 @@ The command writes complete rows from the `keywords` table to JSON. It stops wit
 Preview an import first:
 
 ```bash
-./import-site-search.py PROFILE EXPORT [EXPORT ...] --dry-run
+./import-site-search.py PROFILE EXPORT [EXPORT ...] [--browser {Arc,Dia}] --dry-run
 ```
 
-Import one or more files:
+Import one or more files into Arc (the default):
 
 ```bash
 ./import-site-search.py Personal work-search.json personal-search.json
+```
+
+To import into a Dia profile, use `--browser Dia` and give the Dia profile name or directory:
+
+```bash
+./import-site-search.py Xero work-search.json --browser Dia
 ```
 
 The importer:
@@ -78,7 +93,7 @@ Use `--replace` to replace entries whose keywords already exist:
 ./import-site-search.py Personal work-search.json --replace
 ```
 
-Quit Arc before running an import that would change the database. Dry runs and imports where every entry is skipped do not require Arc to be closed.
+Quit the selected browser before running an import that would change its database. The importer checks whether Arc or Dia is running. Dry runs and imports where every entry is skipped do not require the browser to be closed.
 
 ## Export format
 
